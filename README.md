@@ -1,2 +1,2 @@
 # pokedex
-A simple pokedex using React and GraphQL
+A simple pokedex using React and GraphQL.
