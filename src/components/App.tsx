@@ -1,6 +1,7 @@
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { TypeWithEffectiveness } from '../typeDefs'
+import './App.styles.sass'
 
 type GetTypeChartResponse = {
   typeChart: TypeWithEffectiveness[],
@@ -35,27 +36,40 @@ type TypeChartProps = {
 }
 
 const TypeChart: React.FunctionComponent<TypeChartProps> = ({ chart }) => {
-  return <table>
+  return <table className="typechart">
     <tbody>
     <tr>
       <td/>
-      { chart.map(entry => <th key={ entry.type }>{ entry.type }</th>) }
+      { chart.map(entry => <th key={ entry.type } className="typechart__header-top">
+        <abbr title={ entry.type }>{ entry.type.substring(0, 1) }</abbr>
+      </th>) }
     </tr>
     { chart.map(entry => <tr key={ entry.type }>
-      <th>{ entry.type }</th>
+      <th className="typechart__header-side">
+        <abbr title={ entry.type }>{ entry.type.substring(0, 1) }</abbr>
+      </th>
       { chart.map(against => {
+        let effectClass
         let effect
         if (entry.superEffectiveAgainst.indexOf(against.type) !== -1) {
-          effect = '2'
+          effectClass = 'super'
+          effect = 'is super effective'
         } else if (entry.notVeryEffectiveAgainst.indexOf(against.type) !== -1) {
-          effect = '½'
+          effectClass = 'not-very'
+          effect = 'is not very effective'
         } else if (entry.noEffectAgainst.indexOf(against.type) !== -1) {
-          effect = '0'
+          effectClass = 'immune'
+          effect = 'has no effect'
         } else {
-          effect = '1'
+          effectClass = 'normal'
+          effect = 'is normal'
         }
 
-        return <td key={ against.type }>{ effect }</td>
+        return <td
+          key={ against.type }
+          className={ `typechart__effect typechart__effect--${ effectClass }` }
+          title={ `${ entry.type } ${ effect } against ${ against.type }` }
+        />
       }) }
     </tr>) }
     </tbody>
